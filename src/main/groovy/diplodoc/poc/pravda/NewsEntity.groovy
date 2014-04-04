@@ -6,7 +6,9 @@ import java.time.LocalDateTime
  * @author yaroslav.yermilov
  */
 class NewsEntity {
+    String id
     String caption
-    String description
     String link
+    LocalDateTime time
+    String text
 }

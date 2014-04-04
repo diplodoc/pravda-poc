@@ -9,20 +9,21 @@ def url = 'http://www.pravda.com.ua/news/'
 
 println "Loading '${url}'..."
 
-def document = Jsoup.connect(url).get();
+def newsListDocument = Jsoup.connect(url).get()
 
-def newsEntities = document.select('dd').collect {
+def newsEntities = newsListDocument.select('dd').collect {
     def caption = it.select('dd > a').text()
-
-    def description = it.select('dd > p > a').text()
 
     def link = it.select('dd > a').attr('href')
     link = (link.startsWith('http') ? link : "http://www.pravda.com.ua${link}")
 
+    def articleDocument = Jsoup.connect(link).get()
+    def text = articleDocument.select('div.text').text()
+
     new NewsEntity(
         caption: caption,
-        description: description,
-        link: link
+        link: link,
+        text: text
     )
 }
 
@@ -30,9 +31,11 @@ println 'News elements:'
 println '================'
 newsEntities.each {
     println """
+Id:          ${it.id}
 Caption:     ${it.caption}
-Description: ${it.description}
 Link:        ${it.link}
+Time:        ${it.time}
+Text:        ${it.text}
 """
 }
 println '================'
